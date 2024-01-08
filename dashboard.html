@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .contenido {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .seccion {
+            margin-bottom: 40px;
+        }
+
+        .grafico {
+            margin: 20px 0;
+        }
+
+        .opciones-graficos {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .opcion-grafico {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        .opcion-grafico:hover {
+            background-color: #f4f4f4;
+        }
+
+        #grafico-facturacion {
+            text-align: center;
+        }
+
+        #almacen, #cuentas-por-cobrar {
+            margin-top: 20px;
+        }
+
+        #volver-arriba {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #volver-arriba a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        #volver-arriba a:hover {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bienvenido, {{ session['usuario'] }}!</h1>
+
+    <nav>
+        <a href="#facturacion">Facturación</a>
+        <a href="#almacen">Almacén</a>
+        <a href="#cuentas-por-cobrar">Cuentas por Cobrar</a>
+        <a id="volver-arriba" href="#">Volver arriba</a>
+        <a href="{{ url_for('logout') }}">Salir</a>
+    </nav>
+
+    <div class="contenido">
+        <div class="seccion">
+            <h2 id="facturacion">Facturación</h2>
+
+            <div class="opciones-graficos">
+                <div class="opcion-grafico" onclick="cambiarGrafico('dia')">Día</div>
+                <div class="opcion-grafico" onclick="cambiarGrafico('semana')">Semana</div>
+                <div class="opcion-grafico" onclick="cambiarGrafico('mes')">Mes</div>
+            </div>
+
+            <div class="grafico" id="grafico-facturacion"></div>
+        </div>
+
+        <div class="seccion">
+            <h2 id="almacen">Almacén - Stock Actual</h2>
+            <p>El stock actual es: {{ stock_actual }}</p>
+        </div>
+
+        <div class="seccion">
+            <h2 id="cuentas-por-cobrar">Cuentas por Cobrar</h2>
+            <p>Falta por cobrar: {{ por_cobrar }}</p>
+        </div>
+
+        <div id="volver-arriba"><a href="#">Volver arriba</a></div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // Agrega tu lógica de gráficos aquí usando plotly o la biblioteca de gráficos que prefieras
+        // Ejemplo simple con gráficos de barras para el día, la semana y el mes
+
+        var datos_dia = {
+            x: ['Producto A', 'Producto B', 'Producto C'],
+            y: [120, 150, 80],
+            type: 'bar',
+            name: 'Día'
+        };
+
+        var datos_semana = {
+            x: ['Producto A', 'Producto B', 'Producto C'],
+            y: [300, 450, 200],
+            type: 'bar',
+            name: 'Semana'
+        };
+
+        var datos_mes = {
+            x: ['Producto A', 'Producto B', 'Producto C'],
+            y: [800, 1200, 500],
+            type: 'bar',
+            name: 'Mes'
+        };
+
+        var layout = {
+            barmode: 'group',
+            title: 'Ventas',
+            xaxis: { title: 'Productos' },
+            yaxis: { title: 'Monto' }
+        };
+
+        Plotly.newPlot('grafico-facturacion', [datos_dia], layout);
+
+        function cambiarGrafico(periodo) {
+            var datos;
+
+            if (periodo === 'dia') {
+                datos = datos_dia;
+            } else if (periodo === 'semana') {
+                datos = datos_semana;
+            } else if (periodo === 'mes') {
+                datos = datos_mes;
+            }
+
+            Plotly.newPlot('grafico-facturacion', [datos], layout);
+        }
+    </script>
+</body>
+</html>
